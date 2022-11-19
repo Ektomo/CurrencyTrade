@@ -1,7 +1,7 @@
 package com.gorbunov.currencytrade.gate
 
 import com.gorbunov.currencytrade.model.RegisterRequestBody
-import com.gorbunov.currencytrade.model.UnapprovedUserResponse
+import com.gorbunov.currencytrade.model.AdminUserResponse
 import com.gorbunov.currencytrade.model.UserLoginResponseBody
 import com.gorbunov.currencytrade.model.UserResponseBody
 import kotlinx.serialization.decodeFromString
@@ -85,11 +85,11 @@ class Connection {
 
     inline fun <reified T> makePostRequest(url: String, body: T): String {
         val json = format.encodeToString(value = body)
-        return makeRequestImpl(json, url)
+        return makePostRequestImpl(json, url)
     }
 
 
-    fun makeRequestImpl(
+    fun makePostRequestImpl(
         json: String,
         url: String
     ): String {
@@ -127,15 +127,54 @@ class Connection {
         if (r.isSuccessful) {
             return r.body!!.string()
         } else {
+            throw RuntimeException("Ошибка запроса ${r.message}")
+        }
+    }
+
+    inline fun <reified T> makePatchRequest(url: String, body: T): String {
+        val json = format.encodeToString(value = body)
+        return makePatchRequestImpl(json, url)
+    }
+
+    fun makePatchRequestImpl(
+        json: String,
+        url: String
+    ): String {
+        val contentType = "application/json".toMediaTypeOrNull()
+        val b = json.toRequestBody(contentType)
+
+
+        val request = Request.Builder()
+            .patch(b)
+            .url("$baseUrl$url")
+            .build()
+
+        val r = httpClient.newCall(request).execute()
+
+        if (r.isSuccessful) {
+            return r.body!!.string()
+        } else {
             throw RuntimeException("Ошибка запроса ${r.body}")
         }
     }
 
 
-    fun getUnapprovedList(): List<UnapprovedUserResponse> {
+    fun getUnapprovedList(): List<AdminUserResponse> {
         val result = makeGetRequest("unapproved")
-        val list: List<UnapprovedUserResponse> = format.decodeFromString(result)
-        return list
+        return format.decodeFromString(result)
+    }
+
+    fun getApprovedList(): List<AdminUserResponse> {
+        val result = makeGetRequest("approved")
+        return format.decodeFromString(result)
+    }
+
+    fun approveUser(id: Long){
+        val result = makePatchRequest("approve/$id", "")
+    }
+
+    fun changeBlockStatusBy(id: Long){
+        makePatchRequest("block/$id", "")
     }
 
     fun registerUser(body: RegisterRequestBody): UserResponseBody {

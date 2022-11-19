@@ -55,8 +55,14 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             //Тут должна быть логика с логином
             state.value = StartPosition.Loading
-            gate.setComponents(login.value, pass.value)
-            val user = gate.tempLogin(login.value)
+            gate.setComponents(
+                "user", "12345678"
+//                login.value, pass.value
+            )
+            val user = gate.tempLogin(
+                "user"
+//                login.value
+            )
             dataStore.saveUserId(user.id.toString())
             state.value = StartPosition.LoginAdmin
         }

@@ -1,7 +1,9 @@
 package com.gorbunov.currencytrade
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +31,7 @@ import com.gorbunov.currencytrade.view.admin.BottomAdminNavItem
 import com.gorbunov.currencytrade.view.user.UserBottomNavigation
 import com.gorbunov.currencytrade.view.user.UserNavigationGraph
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 enum class StartPosition{
     NotLogin, LoginAdmin, LoginUser, NeedRegister, Loading
@@ -49,6 +52,7 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
 
             CurrencyTradeTheme {
+                BackPressSample()
                 Crossfade(targetState = currentStartState) { state ->
                     when(state.value){
                         StartPosition.NotLogin -> {
@@ -94,3 +98,34 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+sealed class BackPress {
+    object Idle : BackPress()
+    object InitialTouch : BackPress()
+}
+
+@Composable
+private fun BackPressSample() {
+    var showToast by remember { mutableStateOf(false) }
+
+    var backPressState by remember { mutableStateOf<BackPress>(BackPress.Idle) }
+    val context = LocalContext.current
+
+    if(showToast){
+        Toast.makeText(context, "Нажмите еще раз чтобы выйти", Toast.LENGTH_SHORT).show()
+        showToast= false
+    }
+
+
+    LaunchedEffect(key1 = backPressState) {
+        if (backPressState == BackPress.InitialTouch) {
+            delay(2000)
+            backPressState = BackPress.Idle
+        }
+    }
+
+    BackHandler(backPressState == BackPress.Idle) {
+        backPressState = BackPress.InitialTouch
+        showToast = true
+    }
+}
