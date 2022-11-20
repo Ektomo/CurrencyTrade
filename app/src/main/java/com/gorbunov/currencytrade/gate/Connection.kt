@@ -1,13 +1,11 @@
 package com.gorbunov.currencytrade.gate
 
-import com.gorbunov.currencytrade.model.RegisterRequestBody
-import com.gorbunov.currencytrade.model.AdminUserResponse
-import com.gorbunov.currencytrade.model.UserLoginResponseBody
-import com.gorbunov.currencytrade.model.UserResponseBody
+import com.gorbunov.currencytrade.model.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.concurrent.TimeUnit
@@ -19,11 +17,19 @@ class Connection {
     private var cookie: MutableList<Cookie> = mutableListOf()
 
     var user: String
-        get() {return userHolder[0]}
-        set(value) {userHolder[0] = value}
+        get() {
+            return userHolder[0]
+        }
+        set(value) {
+            userHolder[0] = value
+        }
     var pass: String
-        get() {return passHolder[0]}
-        set(value) {passHolder[0] = value}
+        get() {
+            return passHolder[0]
+        }
+        set(value) {
+            passHolder[0] = value
+        }
     var baseUrl: String = "http://192.168.1.102:8000/users/"
     private var tokenHolder = arrayOf("")
     private var userHolder = arrayOf("")
@@ -83,23 +89,39 @@ class Connection {
     }
 
 
-    inline fun <reified T> makePostRequest(url: String, body: T): String {
+    inline fun <reified T> makePostRequest(
+        url: String,
+        body: T,
+        query: Map<String, String> = mapOf()
+    ): String {
         val json = format.encodeToString(value = body)
-        return makePostRequestImpl(json, url)
+        return makePostRequestImpl(json, url, query)
     }
 
 
     fun makePostRequestImpl(
         json: String,
-        url: String
+        url: String,
+        query: Map<String, String>
     ): String {
         val contentType = "application/json".toMediaTypeOrNull()
         val b = json.toRequestBody(contentType)
 
+        var urlWithParams: String? = null
+
+        if (query.isNotEmpty()) {
+            val urlBuilder = "$baseUrl$url".toHttpUrlOrNull()?.newBuilder()
+
+            query.forEach { (k, v) ->
+                urlBuilder?.addQueryParameter(k, v)
+            }
+
+            urlWithParams = urlBuilder?.build().toString()
+        }
 
         val request = Request.Builder()
             .post(b)
-            .url("$baseUrl$url")
+            .url(urlWithParams ?: "$baseUrl$url")
             .build()
 
         val r = httpClient.newCall(request).execute()
@@ -131,22 +153,34 @@ class Connection {
         }
     }
 
-    inline fun <reified T> makePatchRequest(url: String, body: T): String {
+    inline fun <reified T> makePatchRequest(url: String, body: T,  query: Map<String, String> = mapOf()): String {
         val json = format.encodeToString(value = body)
-        return makePatchRequestImpl(json, url)
+        return makePatchRequestImpl(json, url, query)
     }
 
     fun makePatchRequestImpl(
         json: String,
-        url: String
+        url: String,
+        query: Map<String, String>
     ): String {
         val contentType = "application/json".toMediaTypeOrNull()
         val b = json.toRequestBody(contentType)
 
+        var urlWithParams: String? = null
+
+        if (query.isNotEmpty()) {
+            val urlBuilder = "$baseUrl$url".toHttpUrlOrNull()?.newBuilder()
+
+            query.forEach { (k, v) ->
+                urlBuilder?.addQueryParameter(k, v)
+            }
+
+            urlWithParams = urlBuilder?.build().toString()
+        }
 
         val request = Request.Builder()
             .patch(b)
-            .url("$baseUrl$url")
+            .url(urlWithParams ?: "$baseUrl$url")
             .build()
 
         val r = httpClient.newCall(request).execute()
@@ -154,7 +188,7 @@ class Connection {
         if (r.isSuccessful) {
             return r.body!!.string()
         } else {
-            throw RuntimeException("Ошибка запроса ${r.body}")
+            throw RuntimeException("Ошибка запроса ${r.message}")
         }
     }
 
@@ -164,18 +198,45 @@ class Connection {
         return format.decodeFromString(result)
     }
 
+    fun getSelf(): User {
+        val result = makeGetRequest("me")
+        return format.decodeFromString(result)
+    }
+
+    fun getChecks(): List<Check> {
+        val result = makeGetRequest("checks")
+        return format.decodeFromString(result)
+    }
+
+    fun getCurrencies(): Map<String, String> {
+        val result = makeGetRequest("currency_types")
+        val ct = format.decodeFromString<CurrencyTypes>(result).currencies
+
+        return ct
+//        return format.decodeFromString(result)
+    }
+
+    fun createCheckWith(cur: String) {
+        val result = makePostRequest("create_check", "", mapOf(Pair("currency", cur)))
+    }
+
+    fun fillCheckWith(value: Int) {
+        val result = makePatchRequest("refill", "", mapOf(Pair("amount", "$value"), Pair("currency", "RUB")))
+    }
+
     fun getApprovedList(): List<AdminUserResponse> {
         val result = makeGetRequest("approved")
         return format.decodeFromString(result)
     }
 
-    fun approveUser(id: Long){
+    fun approveUser(id: Long) {
         val result = makePatchRequest("approve/$id", "")
     }
 
-    fun changeBlockStatusBy(id: Long){
+    fun changeBlockStatusBy(id: Long) {
         makePatchRequest("block/$id", "")
     }
+
 
     fun registerUser(body: RegisterRequestBody): UserResponseBody {
         val result = makePostRequest(

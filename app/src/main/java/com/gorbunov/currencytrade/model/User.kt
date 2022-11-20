@@ -2,8 +2,16 @@ package com.gorbunov.currencytrade.model
 
 @kotlinx.serialization.Serializable
 data class User(
-    var id: Long? = null,
-
+    val id: Long,
+    val username: String,
+    val first_name: String,
+    val last_name: String,
+    val is_active: Boolean,
+    val is_approved: Boolean,
+    val is_superuser: Boolean,
+    val created_at: String,
+    val updated_at: String,
+    val full_name: String
 )
 
 
@@ -42,4 +50,23 @@ data class UserLoginResponseBody(
     val updated_at: String,
     val full_name: String,
     val is_superuser: Boolean
+)
+
+@kotlinx.serialization.Serializable
+data class Check(
+    val value : Int,
+    val currency_type: String,
+    val id: Long,
+    val created_at: String
+)
+
+@kotlinx.serialization.Serializable
+data class CurrencyTypes(
+    val success: Boolean,
+    val currencies: Map<String, String>
+)
+
+@kotlinx.serialization.Serializable
+data class Currency(
+    val currency: String
 )

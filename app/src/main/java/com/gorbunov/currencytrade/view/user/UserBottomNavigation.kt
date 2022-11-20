@@ -18,11 +18,23 @@ import com.gorbunov.currencytrade.view.admin.AdminApprovedListView
 import com.gorbunov.currencytrade.view.admin.AdminApprovedListViewModel
 import com.gorbunov.currencytrade.view.admin.AdminBlockListView
 import com.gorbunov.currencytrade.view.admin.AdminBlockListViewModel
+import com.gorbunov.currencytrade.view.user.bag.BagView
+import com.gorbunov.currencytrade.view.user.bag.BagViewModel
+import com.gorbunov.currencytrade.view.user.profile.ProfileView
+import com.gorbunov.currencytrade.view.user.profile.ProfileViewModel
+import com.gorbunov.currencytrade.view.user.wallet.WalletView
+import com.gorbunov.currencytrade.view.user.wallet.WalletViewModel
 
 sealed class BottomUserNavItem(var title: String, var icon: Int, var screen_route: String) {
 
-    object ApprovedList :
-        BottomUserNavItem("Подтвердить", R.drawable.ic_baseline_group_add_24, "approved_list")
+    object Wallet :
+        BottomUserNavItem("Счета", R.drawable.ic_baseline_account_balance_wallet_24, "wallet")
+    object Bag :
+        BottomUserNavItem("Портфель", R.drawable.ic_round_cases_24, "bag")
+    object Trade :
+        BottomUserNavItem("Торговля", R.drawable.ic_baseline_add_chart_24, "trade")
+    object CurrencyHistory:
+        BottomUserNavItem("История", R.drawable.ic_baseline_show_chart_24, "CurrencyHistory")
     object Profile:
         BottomUserNavItem("Профиль", R.drawable.ic_baseline_account_box_24, "profile")
 
@@ -31,14 +43,26 @@ sealed class BottomUserNavItem(var title: String, var icon: Int, var screen_rout
 
 @Composable
 fun UserNavigationGraph(navController: NavHostController){
-    NavHost(navController, startDestination = BottomUserNavItem.ApprovedList.screen_route){
-        composable(BottomUserNavItem.ApprovedList.screen_route){
+    NavHost(navController, startDestination = BottomUserNavItem.Wallet.screen_route){
+        composable(BottomUserNavItem.Wallet.screen_route){
+            val vm = hiltViewModel<WalletViewModel>()
+            WalletView(vm = vm)
+        }
+        composable(BottomUserNavItem.Bag.screen_route){
+            val vm = hiltViewModel<BagViewModel>()
+            BagView(vm = vm)
+        }
+        composable(BottomUserNavItem.Trade.screen_route){
+            val vm = hiltViewModel<AdminApprovedListViewModel>()
+            AdminApprovedListView(vm = vm)
+        }
+        composable(BottomUserNavItem.CurrencyHistory.screen_route){
             val vm = hiltViewModel<AdminApprovedListViewModel>()
             AdminApprovedListView(vm = vm)
         }
         composable(BottomUserNavItem.Profile.screen_route){
-            val vm = hiltViewModel<AdminBlockListViewModel>()
-            AdminBlockListView(vm = vm)
+            val vm = hiltViewModel<ProfileViewModel>()
+            ProfileView(vm = vm)
         }
     }
 }
@@ -46,7 +70,10 @@ fun UserNavigationGraph(navController: NavHostController){
 @Composable
 fun UserBottomNavigation(navController: NavController){
     val items = listOf(
-        BottomUserNavItem.ApprovedList,
+        BottomUserNavItem.Wallet,
+        BottomUserNavItem.Bag,
+        BottomUserNavItem.Trade,
+        BottomUserNavItem.CurrencyHistory,
         BottomUserNavItem.Profile
     )
 

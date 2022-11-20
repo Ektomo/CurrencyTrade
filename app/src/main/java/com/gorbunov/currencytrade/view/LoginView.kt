@@ -216,6 +216,27 @@ fun RegisterView(loginViewModel: LoginViewModel, startPosition: MutableState<Sta
                         focusManager.moveFocus(FocusDirection.Down)
                     })
                 )
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text(text = "Пароль") },
+                    placeholder = { Text(text = "Пароль") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Password
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        loginViewModel.doRegister(
+                            userName = user,
+                            pass = password,
+                            firstName = firstName,
+                            lastName = lastName,
+                            state = startPosition
+                        )
+                    })
+                )
                 Spacer(Modifier.padding(4.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -235,21 +256,7 @@ fun RegisterView(loginViewModel: LoginViewModel, startPosition: MutableState<Sta
 
                 }
 
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text(text = "Пароль") },
-                    placeholder = { Text(text = "Пароль") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(0.8f),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done,
-                        keyboardType = KeyboardType.Password
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {
 
-                    })
-                )
 //                Image(
 //                    painter = painterResource(id = R.drawable.logo),
 //                    contentDescription = "logo",

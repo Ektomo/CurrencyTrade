@@ -34,6 +34,7 @@ fun AdminNavigationGraph(navController: NavHostController){
     NavHost(navController, startDestination = BottomAdminNavItem.ApprovedList.screen_route){
         composable(BottomAdminNavItem.ApprovedList.screen_route){
             val vm = hiltViewModel<AdminApprovedListViewModel>()
+
             AdminApprovedListView(vm = vm)
         }
         composable(BottomAdminNavItem.BlockList.screen_route){

@@ -1,7 +1,6 @@
 package com.gorbunov.currencytrade.view
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gorbunov.currencytrade.CurrencyDataStore
@@ -13,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -25,8 +23,6 @@ class LoginViewModel @Inject constructor(
     val pass = MutableStateFlow("")
 
 
-
-
     fun doRegister(
         userName: String = "user",
         firstName: String = "user",
@@ -36,35 +32,49 @@ class LoginViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             //Тут должна быть логика с логином
-            state.value = StartPosition.Loading
+            try {
+                state.value = StartPosition.Loading
 
 //            gate.setComponents(userName, pass)
-            var registeredUser  = gate.registerUser(
-                RegisterRequestBody(
-                    userName,
-                    firstName,
-                    lastName,
-                    pass
+                var registeredUser = gate.registerUser(
+                    RegisterRequestBody(
+                        userName,
+                        firstName,
+                        lastName,
+                        pass
+                    )
                 )
-            )
-            state.value = StartPosition.NotLogin
+                state.value = StartPosition.NotLogin
+            } catch (e: Exception) {
+                state.value = StartPosition.NotLogin
+            }
+
         }
     }
 
     fun doLogin(state: MutableState<StartPosition>) {
         viewModelScope.launch(Dispatchers.IO) {
-            //Тут должна быть логика с логином
-            state.value = StartPosition.Loading
-            gate.setComponents(
-                "user", "12345678"
+            try {
+                //Тут должна быть логика с логином
+                state.value = StartPosition.Loading
+                gate.setComponents(
+                    "a", "12345678"
 //                login.value, pass.value
-            )
-            val user = gate.tempLogin(
-                "user"
+                )
+                val user = gate.tempLogin(
+                    "a"
 //                login.value
-            )
-            dataStore.saveUserId(user.id.toString())
-            state.value = StartPosition.LoginAdmin
+                )
+                dataStore.saveUserId(user.id.toString())
+                if (user.is_superuser) {
+                    state.value = StartPosition.LoginAdmin
+                } else {
+                    state.value = StartPosition.LoginUser
+                }
+            } catch (e: Exception) {
+                state.value = StartPosition.NotLogin
+            }
+
         }
     }
 

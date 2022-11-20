@@ -32,7 +32,7 @@ class AdminApprovedListViewModel @Inject constructor(
         data class Data(val data: List<AdminUserResponse>) : State()
     }
 
-    private fun loadList(){
+    fun loadList(){
         viewModelScope.launch(Dispatchers.IO) {
             try{
                 curState.value = State.Loading

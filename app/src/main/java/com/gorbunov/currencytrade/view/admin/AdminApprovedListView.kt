@@ -6,7 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -27,11 +31,17 @@ fun AdminApprovedListView(vm: AdminApprovedListViewModel){
     Crossfade(targetState = curState) {
         when(val st = it.value){
             is AdminApprovedListViewModel.State.Data ->
-                LazyColumn(modifier = Modifier.fillMaxSize()){
-                    st.data.forEach { aItem ->
-                        item {
-                            AdminApprovedItemView(item = aItem){ userId ->
-                                vm.approveUserBy(userId)
+                Column(modifier = Modifier.fillMaxSize()){
+//                    IconButton(onClick = {vm.loadList()}) {
+//                        Icon(imageVector = Icons.Default.Refresh, contentDescription = "refresh", modifier = Modifier.wrapContentSize())
+//                    }
+                    LazyColumn(modifier = Modifier
+                        .fillMaxSize()){
+                        st.data.forEach { aItem ->
+                            item {
+                                AdminApprovedItemView(item = aItem){ userId ->
+                                    vm.approveUserBy(userId)
+                                }
                             }
                         }
                     }
