@@ -46,6 +46,7 @@ class LoginViewModel @Inject constructor(
                 )
                 state.value = StartPosition.NotLogin
             } catch (e: Exception) {
+                println(e.message)
                 state.value = StartPosition.NotLogin
             }
 
@@ -58,12 +59,12 @@ class LoginViewModel @Inject constructor(
                 //Тут должна быть логика с логином
                 state.value = StartPosition.Loading
                 gate.setComponents(
-                    "a", "12345678"
-//                login.value, pass.value
+//                    "a", "12345678"
+                login.value, pass.value
                 )
                 val user = gate.tempLogin(
-                    "a"
-//                login.value
+//                    "a"
+                login.value
                 )
                 dataStore.saveUserId(user.id.toString())
                 if (user.is_superuser) {

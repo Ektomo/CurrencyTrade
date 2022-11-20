@@ -54,7 +54,7 @@ data class UserLoginResponseBody(
 
 @kotlinx.serialization.Serializable
 data class Check(
-    val value : Int,
+    val value : Float,
     val currency_type: String,
     val id: Long,
     val created_at: String
@@ -62,11 +62,23 @@ data class Check(
 
 @kotlinx.serialization.Serializable
 data class CurrencyTypes(
-    val success: Boolean,
-    val currencies: Map<String, String>
+//    val success: Boolean,
+    val currencies: List<String>
 )
 
 @kotlinx.serialization.Serializable
-data class Currency(
-    val currency: String
+data class CurrencyPrice(
+    val type_from: String,
+    val type_to: String,
+    val price: Float
 )
+
+
+@kotlinx.serialization.Serializable
+data class ChecksHistory(
+    val currency_type_from: String,
+    val currency_type_to: String,
+    val value_to: Float,
+    val value_from: Float
+)
+

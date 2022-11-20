@@ -22,6 +22,10 @@ import com.gorbunov.currencytrade.view.user.bag.BagView
 import com.gorbunov.currencytrade.view.user.bag.BagViewModel
 import com.gorbunov.currencytrade.view.user.profile.ProfileView
 import com.gorbunov.currencytrade.view.user.profile.ProfileViewModel
+import com.gorbunov.currencytrade.view.user.trade.TradeView
+import com.gorbunov.currencytrade.view.user.trade.TradeViewModel
+import com.gorbunov.currencytrade.view.user.wallet.CheckDetailView
+import com.gorbunov.currencytrade.view.user.wallet.CheckDetailViewModel
 import com.gorbunov.currencytrade.view.user.wallet.WalletView
 import com.gorbunov.currencytrade.view.user.wallet.WalletViewModel
 
@@ -46,15 +50,15 @@ fun UserNavigationGraph(navController: NavHostController){
     NavHost(navController, startDestination = BottomUserNavItem.Wallet.screen_route){
         composable(BottomUserNavItem.Wallet.screen_route){
             val vm = hiltViewModel<WalletViewModel>()
-            WalletView(vm = vm)
+            WalletView(vm = vm, navController)
         }
         composable(BottomUserNavItem.Bag.screen_route){
             val vm = hiltViewModel<BagViewModel>()
             BagView(vm = vm)
         }
         composable(BottomUserNavItem.Trade.screen_route){
-            val vm = hiltViewModel<AdminApprovedListViewModel>()
-            AdminApprovedListView(vm = vm)
+            val vm = hiltViewModel<TradeViewModel>()
+            TradeView(vm = vm)
         }
         composable(BottomUserNavItem.CurrencyHistory.screen_route){
             val vm = hiltViewModel<AdminApprovedListViewModel>()
@@ -63,6 +67,10 @@ fun UserNavigationGraph(navController: NavHostController){
         composable(BottomUserNavItem.Profile.screen_route){
             val vm = hiltViewModel<ProfileViewModel>()
             ProfileView(vm = vm)
+        }
+        composable("check_detail"){
+            val vm = hiltViewModel<CheckDetailViewModel>()
+            CheckDetailView(vm = vm)
         }
     }
 }

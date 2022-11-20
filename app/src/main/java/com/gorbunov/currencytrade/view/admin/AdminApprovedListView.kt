@@ -1,5 +1,6 @@
 package com.gorbunov.currencytrade.view.admin
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -55,6 +56,10 @@ fun AdminApprovedListView(vm: AdminApprovedListViewModel){
                 LoadingView()
             }
         }
+    }
+
+    BackHandler(curState.value is AdminApprovedListViewModel.State.Error) {
+        vm.loadList()
     }
 
 }

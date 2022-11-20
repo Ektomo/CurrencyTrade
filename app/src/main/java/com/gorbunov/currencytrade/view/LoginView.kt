@@ -36,22 +36,12 @@ fun LoginView(loginViewModel: LoginViewModel, startPosition: MutableState<StartP
     val user = loginViewModel.login.collectAsState()
     val password = loginViewModel.pass.collectAsState()
     val focusManager = LocalFocusManager.current
-    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
 //        contentAlignment = Alignment.BottomCenter
     ) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(top = 30.dp)
-//                .background(Color.White),
-//            contentAlignment = Alignment.TopCenter
-//        ) {
-//            Image(painterResource(R.drawable.logo), contentDescription = "logo")
-//
-//        }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

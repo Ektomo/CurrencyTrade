@@ -15,9 +15,10 @@ class WalletViewModel @Inject constructor(
     val gate: Connection
 ): ViewModel() {
 
-    var rubCheck = Check(0, "", -1, "")
+    var rubCheck = Check(0f, "", -1, "")
     var clearChecks = listOf<Check>()
-    var curs = mapOf<String, String>()
+    var curs = listOf("RUB", "USD", "EUR", "AED", "AFN", "ALL", "AMD", "ANG",
+        "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD")
 
     init {
         loadChecks()
@@ -75,6 +76,6 @@ class WalletViewModel @Inject constructor(
     sealed class State {
         object Loading : State()
         data class Error(val e: Exception) : State()
-        data class Data(val rudCheck: Check, val data: List<Check>, val currencies: Map<String, String>) : State()
+        data class Data(val rudCheck: Check, val data: List<Check>, val currencies: List<String>) : State()
     }
 }

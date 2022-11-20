@@ -1,5 +1,6 @@
 package com.gorbunov.currencytrade.view.user.bag
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gorbunov.currencytrade.view.LoadingView
+import com.gorbunov.currencytrade.view.admin.AdminApprovedListViewModel
 import com.himanshoe.charty.bar.BarChart
 import com.himanshoe.charty.bar.model.BarData
 import com.himanshoe.charty.common.axis.AxisConfig
@@ -49,8 +51,8 @@ fun BagView(vm: BagViewModel) {
                             )
                         )
                     }
-                    bars.add(BarData("lla", 24f))
-                    bars.add(BarData("llal", 27f))
+//                    bars.add(BarData("lla", 24f))
+//                    bars.add(BarData("llal", 27f))
                     val colors = mutableListOf<Color>()
                     bars.forEach{ _ ->
                         colors.add(Color.Red)
@@ -76,5 +78,10 @@ fun BagView(vm: BagViewModel) {
                 LoadingView()
             }
         }
+    }
+
+
+    BackHandler(curState.value is BagViewModel.State.Error) {
+        vm.loadChecks()
     }
 }

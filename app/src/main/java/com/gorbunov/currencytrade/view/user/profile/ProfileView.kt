@@ -1,5 +1,6 @@
 package com.gorbunov.currencytrade.view.user.profile
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import com.gorbunov.currencytrade.toNo
 import com.gorbunov.currencytrade.toYes
 import com.gorbunov.currencytrade.view.LoadingView
+import com.gorbunov.currencytrade.view.admin.AdminApprovedListViewModel
 
 @Composable
 fun ProfileView(vm: ProfileViewModel) {
@@ -57,6 +59,10 @@ fun ProfileView(vm: ProfileViewModel) {
                 LoadingView()
             }
         }
+    }
+
+    BackHandler(curState.value is ProfileViewModel.State.Error) {
+        vm.loadInfo()
     }
 }
 

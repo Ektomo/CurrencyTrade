@@ -1,5 +1,6 @@
 package com.gorbunov.currencytrade.view.admin
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -47,6 +48,10 @@ fun AdminBlockListView(vm: AdminBlockListViewModel) {
         }
     }
 
+
+    BackHandler(curState.value is AdminBlockListViewModel.State.Error) {
+        vm.loadList()
+    }
 }
 
 @Composable
