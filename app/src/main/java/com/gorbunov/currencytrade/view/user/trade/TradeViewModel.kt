@@ -28,14 +28,14 @@ class TradeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 currentState.value = State.Loading
-//                if (curs.isEmpty()) {
-//                    curs = gate.getCurrencies()
-//                }
+                if (curs.isEmpty()) {
+                    curs = gate.getCurrencies()
+                }
                 val checks = gate.getChecks()
-                val allCurs = listOf("RUB", "USD", "EUR", "AED", "AFN", "ALL", "AMD", "ANG",
-                    "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD")
-//                val curPrice = gate.getCurrencyValue("RUB", allCurs.first())
-                currentState.value = State.Data(checks, allCurs, CurrencyPrice(
+//                val allCurs = listOf("RUB", "USD", "EUR", "AED", "AFN", "ALL", "AMD", "ANG",
+//                    "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD")
+                val curPrice = gate.getCurrencyValue("RUB", curs.first())
+                currentState.value = State.Data(checks, curs, CurrencyPrice(
                     "RUB", "AUD", 0.62f
                 ))
             } catch (e: Exception) {
